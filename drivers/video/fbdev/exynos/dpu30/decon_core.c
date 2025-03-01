@@ -94,6 +94,7 @@ DEFINE_SPINLOCK(g_slock);
  */
 static struct dpp_restrictions_info disp_res;
 
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 static char *decon_state_names[] = {
 	"INIT",
 	"ON",
@@ -106,6 +107,7 @@ static char *decon_state_names[] = {
 	"OFF",
 	"TUI",
 };
+#endif
 
 void decon_tracing_mark_write(struct decon_device *decon, char id, char *str1, int value)
 {
@@ -607,9 +609,11 @@ int decon_set_out_sd_state(struct decon_device *decon, enum decon_state state)
 #endif
 
 	for (i = 0; i < num_dsi; i++) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_dbg("decon-%d state:%s -> %s, set dsi-%d\n", decon->id,
 				decon_state_names[prev_state],
 				decon_state_names[state], i);
+#endif
 		if (state == DECON_STATE_OFF) {
 			ret = v4l2_subdev_call(decon->out_sd[i], video, s_stream, 0);
 			if (ret) {
@@ -626,9 +630,11 @@ int decon_set_out_sd_state(struct decon_device *decon, enum decon_state state)
 			ret = v4l2_subdev_call(decon->out_sd[i], core, ioctl,
 					DSIM_IOC_DOZE, NULL);
 			if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 				decon_err("decon-%d failed to set %s (ret %d)\n",
 						decon->id,
 						decon_state_names[state], ret);
+#endif
 				goto err;
 			}
 		} else if (state == DECON_STATE_ON) {
@@ -652,9 +658,11 @@ int decon_set_out_sd_state(struct decon_device *decon, enum decon_state state)
 			ret = v4l2_subdev_call(decon->out_sd[i], core, ioctl,
 					DSIM_IOC_DOZE_SUSPEND, NULL);
 			if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 				decon_err("decon-%d failed to set %s (ret %d)\n",
 						decon->id,
 						decon_state_names[state], ret);
+#endif
 				goto err;
 			}
 		} else if (state == DECON_STATE_HIBER) {
@@ -719,12 +727,16 @@ int _decon_enable(struct decon_device *decon, enum decon_state state)
 	int ret = 0;
 
 	if (IS_DECON_ON_STATE(decon)) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_warn("%s decon-%d already on(%s) state\n", __func__,
 				decon->id, decon_state_names[decon->state]);
+#endif
 		ret = decon_set_out_sd_state(decon, state);
 		if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 			decon_err("%s decon-%d failed to set subdev %s state\n",
 					__func__, decon->id, decon_state_names[state]);
+#endif
 			return ret;
 		}
 		decon->state = state;
@@ -749,8 +761,10 @@ int _decon_enable(struct decon_device *decon, enum decon_state state)
 
 	ret = decon_set_out_sd_state(decon, state);
 	if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_err("%s decon-%d failed to set subdev %s state\n",
 				__func__, decon->id, decon_state_names[state]);
+#endif
 	}
 
 	decon_to_init_param(decon, &p);
@@ -808,8 +822,10 @@ static int decon_enable(struct decon_device *decon)
 
 	mutex_lock(&decon->lock);
 	if (decon->state == next_state) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_warn("decon-%d %s already %s state\n", decon->id,
 				__func__, decon_state_names[decon->state]);
+#endif
 		goto out;
 	}
 
@@ -821,23 +837,29 @@ retry_enable:
 
 	ret = _decon_enable(decon, next_state);
 	if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_err("decon-%d failed to set %s (ret %d)\n",
 				decon->id, decon_state_names[next_state], ret);
+#endif
 		if (prev_state == DECON_STATE_OFF ||
 			prev_state == DECON_STATE_DOZE_SUSPEND)
 			_decon_disable(decon, prev_state);
 
 		if (--retry >= 0 && ret == -EAGAIN) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 			decon_err("decon-%d retry set %s (remained cnt:%d)\n",
 					decon->id, decon_state_names[next_state], retry);
+#endif
 			goto retry_enable;
 		}
 
 		goto out;
 	}
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 	decon_info("decon-%d %s - (state:%s -> %s)\n", decon->id, __func__,
 			decon_state_names[prev_state],
 			decon_state_names[decon->state]);
+#endif
 
 out:
 	mutex_unlock(&decon->lock);
@@ -852,8 +874,10 @@ static int decon_doze(struct decon_device *decon)
 
 	mutex_lock(&decon->lock);
 	if (decon->state == next_state) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_warn("decon-%d %s already %s state\n", decon->id,
 				__func__, decon_state_names[decon->state]);
+#endif
 		goto out;
 	}
 
@@ -869,22 +893,28 @@ retry_enable:
 
 	ret = _decon_enable(decon, next_state);
 	if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_err("decon-%d failed to set %s (ret %d)\n",
 				decon->id, decon_state_names[next_state], ret);
+#endif
 		if (prev_state == DECON_STATE_OFF ||
 			prev_state == DECON_STATE_DOZE_SUSPEND)
 			_decon_disable(decon, prev_state);
 
 		if (--retry >= 0 && ret == -EAGAIN) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 			decon_err("decon-%d retry set %s (remained cnt:%d)\n",
 					decon->id, decon_state_names[next_state], retry);
+#endif
 			goto retry_enable;
 		}
 		goto out;
 	}
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 	decon_info("decon-%d %s - (state:%s -> %s)\n", decon->id, __func__,
 			decon_state_names[prev_state],
 			decon_state_names[decon->state]);
+#endif
 
 #ifdef CONFIG_EXYNOS_DOZE_FIRST_FRAME_BLACK
 	decon_doze_first_frame_black(decon, prev_state, next_state);
@@ -903,8 +933,10 @@ int decon_doze_wake(struct decon_device *decon)
 
 	mutex_lock(&decon->lock);
 	if (decon->state == next_state) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_warn("decon-%d %s already %s state\n", decon->id,
 				__func__, decon_state_names[decon->state]);
+#endif
 		goto out;
 	}
 
@@ -913,12 +945,16 @@ int decon_doze_wake(struct decon_device *decon)
 	decon_info("decon-%d %s +\n", decon->id, __func__);
 	ret = _decon_enable(decon, next_state);
 	if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_err("decon-%d failed to set %s (ret %d)\n",
 				decon->id, decon_state_names[next_state], ret);
+#endif
 		goto out;
 	}
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 	decon_info("decon-%d %s - (state:%s -> %s)\n", decon->id, __func__,
 			decon_state_names[prev_state], decon_state_names[decon->state]);
+#endif
 
 out:
 	mutex_unlock(&decon->lock);
@@ -991,13 +1027,17 @@ int _decon_disable(struct decon_device *decon, enum decon_state state)
 	int ret = 0;
 
 	if (IS_DECON_OFF_STATE(decon)) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_warn("%s decon-%d already off (%s)\n", __func__,
 				decon->id, decon_state_names[decon->state]);
+#endif
 		ret = decon_set_out_sd_state(decon, state);
 		if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 			decon_err("%s decon-%d failed to set subdev %s state\n",
 					__func__, decon->id,
 					decon_state_names[state]);
+#endif
 			return ret;
 		}
 		decon->state = state;
@@ -1046,8 +1086,10 @@ int _decon_disable(struct decon_device *decon, enum decon_state state)
 
 	ret = decon_set_out_sd_state(decon, state);
 	if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_err("%s decon-%d failed to set subdev %s state\n",
 				__func__, decon->id, decon_state_names[state]);
+#endif
 	}
 
 	pm_relax(decon->dev);
@@ -1082,13 +1124,17 @@ int _decon_disable(struct decon_device *decon, enum decon_state state)
 static int decon_disable(struct decon_device *decon)
 {
 	int ret = 0;
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 	enum decon_state prev_state = decon->state;
+#endif
 	enum decon_state next_state = DECON_STATE_OFF;
 
 	mutex_lock(&decon->lock);
 	if (decon->state == next_state) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_warn("decon-%d %s already %s state\n", decon->id,
 				__func__, decon_state_names[decon->state]);
+#endif
 		goto out;
 	}
 
@@ -1099,13 +1145,17 @@ static int decon_disable(struct decon_device *decon)
 	decon_info("decon-%d %s +\n", decon->id, __func__);
 	ret = _decon_disable(decon, next_state);
 	if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_err("decon-%d failed to set %s (ret %d)\n",
 				decon->id, decon_state_names[next_state], ret);
+#endif
 		goto out;
 	}
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 	decon_info("decon-%d %s - (state:%s -> %s)\n", decon->id, __func__,
 			decon_state_names[prev_state],
 			decon_state_names[decon->state]);
+#endif
 
 out:
 	mutex_unlock(&decon->lock);
@@ -1115,13 +1165,17 @@ out:
 int decon_doze_suspend(struct decon_device *decon)
 {
 	int ret = 0;
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 	enum decon_state prev_state = decon->state;
+#endif
 	enum decon_state next_state = DECON_STATE_DOZE_SUSPEND;
 
 	mutex_lock(&decon->lock);
 	if (decon->state == next_state) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_warn("decon-%d %s already %s state\n", decon->id,
 				__func__, decon_state_names[decon->state]);
+#endif
 		goto out;
 	}
 
@@ -1129,13 +1183,17 @@ int decon_doze_suspend(struct decon_device *decon)
 	decon_info("decon-%d %s +\n", decon->id, __func__);
 	ret = _decon_disable(decon, next_state);
 	if (ret < 0) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_err("decon-%d failed to set %s (ret %d)\n",
 				decon->id, decon_state_names[next_state], ret);
+#endif
 		goto out;
 	}
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 	decon_info("decon-%d %s - (state:%s -> %s)\n", decon->id, __func__,
 			decon_state_names[prev_state],
 			decon_state_names[decon->state]);
+#endif
 
 #ifdef CONFIG_EXYNOS_DOZE_FIRST_FRAME_BLACK
 	decon_doze_first_frame_black(decon, prev_state, next_state);
@@ -1182,8 +1240,10 @@ int decon_update_pwr_state(struct decon_device *decon, enum disp_pwr_mode mode)
 
 	mutex_lock(&decon->pwr_state_lock);
 	if (decon_pwr_state[mode].state == decon->state) {
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 		decon_warn("decon-%d already %s state\n",
 				decon->id, decon_state_names[decon->state]);
+#endif
 		goto out;
 	}
 
@@ -3757,6 +3817,7 @@ static int decon_set_win_config(struct decon_device *decon,
 		decon->state == DECON_STATE_TUI ||
 		IS_ENABLED(CONFIG_EXYNOS_VIRTUAL_DISPLAY)) {
 		decon_save_win_config_event(decon, win_data, WC_ID_SKIP);
+#ifdef CONFIG_EXYNOS_LOG_CLEANUP_REVERT
 #if defined(CONFIG_EXYNOS_COMMON_PANEL) || \
 	defined(CONFIG_EXYNOS_READ_ESD_SOLUTION)
 		decon_warn("decon-%d skip win_config(state:%s, bypass:%s)\n",
@@ -3765,6 +3826,7 @@ static int decon_set_win_config(struct decon_device *decon,
 #else
 		decon_warn("decon-%d skip win_config(state:%s)\n",
 				decon->id, decon_state_names[decon->state]);
+#endif
 #endif
 		num_of_window = decon_get_active_win_count(decon, win_data, &readback_req);
 
