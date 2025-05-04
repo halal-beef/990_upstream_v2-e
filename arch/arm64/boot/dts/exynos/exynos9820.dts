@@ -96,17 +96,6 @@
 	firmware {
 		android: android {
 			compatible = "android,firmware";
-			fstab {
-				compatible = "android,fstab";
-				vendor: vendor {
-					compatible = "android,vendor";
-					dev = "/dev/block/platform/13d60000.ufs/by-name/vendor";
-					type = "ext4";
-					mnt_flags = "ro";
-					fsmgr_flags = "wait";
-					status = "okay";
-				};
-			};
 		};
 	};
 
