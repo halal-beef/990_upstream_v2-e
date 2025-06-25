@@ -23,6 +23,11 @@
  * $Id$
  */
 
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
+
 /* include files */
 #include <typedefs.h>
 #include <bcmutils.h>
@@ -3234,3 +3239,7 @@ dhd_bus_check_driver_up(void)
 	return isup;
 }
 EXPORT_SYMBOL(dhd_bus_check_driver_up);
+
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic pop
+#endif

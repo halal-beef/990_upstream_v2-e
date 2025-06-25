@@ -25,6 +25,14 @@
 
 /** XXX Twiki: [PCIeFullDongleArchitecture] */
 
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+#endif
+
 /* include files */
 #include <typedefs.h>
 #include <bcmutils.h>
@@ -14575,3 +14583,7 @@ dhdpcie_induce_cbp_hang(dhd_pub_t *dhd)
 	val = 1;
 	dhd_sbreg_op(dhd, addr, &val, FALSE);
 }
+
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic pop
+#endif

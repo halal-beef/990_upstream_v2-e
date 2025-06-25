@@ -41,6 +41,11 @@
 #include <linux/list.h>
 #include <bcmiov.h>
 
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
+
 #ifdef DHD_USE_CISINFO_FROM_OTP
 #include <bcmdevs_legacy.h>    /* need to still support chips no longer in trunk firmware */
 #include <siutils.h>
@@ -1996,3 +2001,7 @@ dhd_check_stored_module_info(char *vid)
 }
 #endif /* USE_DIRECT_VID_TAG */
 #endif /* DHD_USE_CISINFO */
+
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic pop
+#endif

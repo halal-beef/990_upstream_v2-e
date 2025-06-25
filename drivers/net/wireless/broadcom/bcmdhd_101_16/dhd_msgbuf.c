@@ -27,6 +27,15 @@
 
 /** XXX Twiki: [PCIeFullDongleArchitecture] */
 
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+#endif
+
 #include <typedefs.h>
 #include <osl.h>
 
@@ -12633,3 +12642,7 @@ dhd_bus_flow_ring_status_dpc_trace(dhd_pub_t *dhd)
 	dhd->bus->frs_dpc_count ++;
 }
 #endif /* DHD_FLOW_RING_STATUS_TRACE */
+
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic pop
+#endif

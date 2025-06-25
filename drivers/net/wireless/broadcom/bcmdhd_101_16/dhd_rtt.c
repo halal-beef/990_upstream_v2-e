@@ -49,6 +49,14 @@
 #include <wl_cfgnan.h>
 #endif /* WL_NAN */
 
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+#endif
+
 static DEFINE_SPINLOCK(noti_list_lock);
 #define NULL_CHECK(p, s, err)  \
 	do { \
@@ -4999,3 +5007,7 @@ dhd_rtt_deinit(dhd_pub_t *dhd)
 #endif /* WL_CFG80211 */
 	return err;
 }
+
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic pop
+#endif

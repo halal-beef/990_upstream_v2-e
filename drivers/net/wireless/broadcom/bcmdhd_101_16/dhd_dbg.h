@@ -66,6 +66,7 @@ extern void dhd_log_dump_write(int type, char *binary_data,
 /* NON-NDIS cases */
 #ifdef DHD_LOG_DUMP
 /* Common case for EFI and non EFI */
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 #define DHD_ERROR(args)	\
 do {	\
 	if (dhd_msg_level & DHD_ERROR_VAL) {	\
@@ -77,10 +78,19 @@ do {	\
 
 /* !defined(DHD_EFI) and defined(DHD_LOG_DUMP) */
 #define DHD_INFO(args)		do {if (dhd_msg_level & DHD_INFO_VAL) printf args;} while (0)
+#else
+#define DHD_ERROR(args)
+#define DHD_INFO(args)
+#endif
 #else /* DHD_LOG_DUMP */
 /* !defined(DHD_LOG_DUMP cases) */
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 #define DHD_ERROR(args)		do {if (dhd_msg_level & DHD_ERROR_VAL) printf args;} while (0)
 #define DHD_INFO(args)		do {if (dhd_msg_level & DHD_INFO_VAL) printf args;} while (0)
+#else
+#define DHD_ERROR(args)
+#define DHD_INFO(args)
+#endif
 #endif /* DHD_LOG_DUMP */
 
 #define DHD_TRACE(args)		do {if (dhd_msg_level & DHD_TRACE_VAL) printf args;} while (0)
@@ -259,8 +269,12 @@ do {	\
 
 #else /* defined(BCMDBG) || defined(DHD_DEBUG) */
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 #define DHD_ERROR(args)		do {if (dhd_msg_level & DHD_ERROR_VAL) \
 								printf args;} while (0)
+#else
+#define DHD_ERROR(args)
+#endif
 #define DHD_TRACE(args)
 #define DHD_INFO(args)
 
@@ -369,5 +383,4 @@ extern int log_print_threshold;
 
 /* Defines msg bits */
 #include <dhdioctl.h>
-
 #endif /* _dhd_dbg_ */

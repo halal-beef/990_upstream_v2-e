@@ -39,6 +39,13 @@
 #include <bcmicmp.h>
 #include <dhd_linux_pktdump.h>
 
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+#endif
+
 #define DHD_PKTDUMP(arg)	DHD_ERROR(arg)
 #define DHD_PKTDUMP_MEM(arg)	DHD_ERROR_MEM(arg)
 #define PACKED_STRUCT __attribute__ ((packed))
@@ -1354,3 +1361,7 @@ dhd_rx_pkt_dump(dhd_pub_t *dhdp, int ifidx, uint8 *pktdata, uint32 pktlen)
 	}
 }
 #endif /* DHD_RX_DUMP */
+
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic pop
+#endif

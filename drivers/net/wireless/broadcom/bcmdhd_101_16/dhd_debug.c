@@ -46,6 +46,15 @@
 #include <dhd_event_log_filter.h>
 #endif /* DHD_EVENT_LOG_FILTER */
 
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+#endif
+
 uint8 control_logtrace = CUSTOM_CONTROL_LOGTRACE;
 
 struct map_table {
@@ -2768,3 +2777,7 @@ dhd_dbg_set_fwverbose(dhd_pub_t *dhdp, uint32 new_val)
 		dhdp->dbg->dbg_rings[FW_VERBOSE_RING_ID].log_level = new_val;
 	}
 }
+
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic pop
+#endif

@@ -27,6 +27,14 @@
  * Filter MODULE and Report MODULE
  */
 
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+#endif
+
 #include <typedefs.h>
 #include <osl.h>
 #include <dngl_stats.h>
@@ -3220,3 +3228,7 @@ int dhd_event_log_filter_adps_energy_gain(dhd_pub_t *dhdp)
 	return ret;
 }
 #endif /* WLADPS_ENERGY_GAIN */
+
+#if !defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
+#pragma GCC diagnostic pop
+#endif
