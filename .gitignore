@@ -131,3 +131,10 @@ all.config
 
 # Kdevelop4
 *.kdev4
+
+# Toolchain
+toolchain/clang_14
+
+# Build directories
+out
+build/out
