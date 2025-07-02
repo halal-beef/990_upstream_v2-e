@@ -38,10 +38,8 @@
 #define SECLOG			"[sec_input]"
 #define INPUT_LOG_BUF_SIZE	512
 
-#ifdef CONFIG_SEC_DEBUG_TSP_LOG
+#if defined(CONFIG_SEC_DEBUG_TSP_LOG) && defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 #include <linux/input/sec_tsp_log.h>
-
-#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 
 #define input_dbg(mode, dev, fmt, ...)						\
 ({										\
@@ -128,6 +126,7 @@
 #endif
 #define input_log_fix() {}
 #else
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 #define input_dbg(mode, dev, fmt, ...)						\
 ({										\
 	dev_dbg(dev, SECLOG fmt, ## __VA_ARGS__);				\
@@ -143,12 +142,14 @@
 #define input_raw_info(mode, dev, fmt, ...) input_info(mode, dev, fmt, ## __VA_ARGS__)
 #define input_log_fix()	{}
 #define input_raw_data_clear() {}
-#endif
-
 #else
 #define input_dbg(mode, dev, fmt, ...)
 #define input_info(mode, dev, fmt, ...)
 #define input_err(mode, dev, fmt, ...)
+#define input_raw_info(mode, dev, fmt, ...)
+#define input_log_fix()
+#define input_raw_data_clear()
+#endif
 #endif
 
 /*

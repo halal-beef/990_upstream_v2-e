@@ -11,6 +11,7 @@
  */
 
 #include "sec_ts.h"
+#include <linux/proc_fs.h>
 
 struct sec_ts_data *tsp_info;
 struct sec_ts_data *ts_dup;
