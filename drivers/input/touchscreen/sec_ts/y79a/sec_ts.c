@@ -781,8 +781,9 @@ static void sec_ts_check_rawdata(struct work_struct *work)
 
 static void dump_tsp_log(void)
 {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: %s %s: start\n", SEC_TS_I2C_NAME, SECLOG, __func__);
-
+#endif
 #ifdef CONFIG_BATTERY_SAMSUNG
 	if (lpcharge == 1) {
 		pr_err("%s: %s %s: ignored ## lpm charging Mode!!\n", SEC_TS_I2C_NAME, SECLOG, __func__);
@@ -1879,14 +1880,18 @@ static ssize_t sec_ts_tsp_fail_hist_all_read(struct file *file, char __user *buf
 static ssize_t sec_ts_tsp_cmoffset_read(struct file *file, char __user *buf,
 					size_t len, loff_t *offset)
 {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("[sec_input] %s called offset:%d\n", __func__, (int)*offset);
+#endif
 	return sec_ts_tsp_cmoffset_all_read(file, buf, len, offset);
 }
 
 static ssize_t sec_ts_tsp_fail_hist_read(struct file *file, char __user *buf,
 					size_t len, loff_t *offset)
 {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("[sec_input] %s called fail_hist:%d\n", __func__, (int)*offset);
+#endif
 	return sec_ts_tsp_fail_hist_all_read(file, buf, len, offset);
 }
 

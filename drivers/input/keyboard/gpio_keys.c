@@ -466,8 +466,10 @@ static ssize_t wakeup_enable(struct device *dev,
 			bdata->button->wakeup = 1;
 		else
 			bdata->button->wakeup = 0;
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_err("%s %s wakeup status %d\n", SECLOG, bdata->button->desc,
 				bdata->button->wakeup);
+#endif
 	}
 
 out:
@@ -506,7 +508,9 @@ static ssize_t keycode_pressed_show(struct device *dev,
 		}
 	}
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s %s: %s\n", SECLOG, __func__, buff);
+#endif
 	count = snprintf(buf, strnlen(buff, len - 2) + 2, "%s\n", buff);
 
 	kfree(buff);
@@ -559,7 +563,9 @@ static ssize_t key_pressed_count_show(struct device *dev,
 	endchar = (int)strnlen(buff, len);
 	buff[endchar - 1] = '\0';
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s %s: %s\n", SECLOG, __func__, buff);
+#endif
 	count = snprintf(buf, len, "%s", buff);
 
 	kfree(buff);
@@ -627,9 +633,10 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 #ifndef CONFIG_SEC_DEBUG
 	dbg_snapshot_check_crash_key(button->code, state);
 #endif
-
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s %s: %d (%d/%d)\n", SECLOG, __func__, button->code, state,
 									irqd_is_wakeup_set(&desc->irq_data));
+#endif
 
 	if (type == EV_ABS) {
 		if (state)
@@ -688,7 +695,9 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void *dev_id)
 			 * handler to run.
 			 */
 			input_report_key(bdata->input, button->code, 1);
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 			pr_info("%s %s: %d (%d)\n", SECLOG, __func__, button->code, 1);
+#endif
 		}
 	}
 

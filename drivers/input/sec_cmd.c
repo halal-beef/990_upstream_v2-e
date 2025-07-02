@@ -26,8 +26,10 @@ void sec_cmd_set_cmd_exit(struct sec_cmd_data *data)
 #ifdef USE_SEC_CMD_QUEUE
 	mutex_lock(&data->fifo_lock);
 	if (kfifo_len(&data->cmd_queue)) {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("%s: %s %s: do next cmd, left cmd[%d]\n", dev_name(data->fac_dev), SECLOG, __func__,
 			(int)(kfifo_len(&data->cmd_queue) / sizeof(struct command)));
+#endif
 		mutex_unlock(&data->fifo_lock);
 
 		/* check lock	*/
@@ -155,7 +157,9 @@ static ssize_t sec_cmd_store(struct device *dev,
 	else
 		memcpy(buff, buf, len);
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_debug("%s: %s %s: COMMAND = %s\n", dev_name(data->fac_dev), SECLOG, __func__, buff);
+#endif
 
 	/* find command */
 	list_for_each_entry(sec_cmd_ptr, &data->cmd_list_head, list) {
@@ -196,7 +200,9 @@ static ssize_t sec_cmd_store(struct device *dev,
 	}
 
 	if (cmd_found) {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("%s: %s %s: cmd = %s", dev_name(data->fac_dev), SECLOG, __func__, sec_cmd_ptr->cmd_name);
+#endif
 		for (i = 0; i < param_cnt; i++) {
 			if (i == 0)
 				pr_cont(" param =");
@@ -204,7 +210,9 @@ static ssize_t sec_cmd_store(struct device *dev,
 		}
 		pr_cont("\n");
 	} else {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("%s: %s %s: cmd = %s(%s)\n", dev_name(data->fac_dev), SECLOG, __func__, buff, sec_cmd_ptr->cmd_name);
+#endif
 	}
 
 	sec_cmd_ptr->cmd_func(data);
@@ -270,7 +278,9 @@ static void sec_cmd_store_function(struct sec_cmd_data *data)
 	else
 		memcpy(buff, buf, len);
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_debug("%s: %s %s: COMMAND : %s\n", dev_name(data->fac_dev), SECLOG, __func__, buff);
+#endif
 
 	/* find command */
 	list_for_each_entry(sec_cmd_ptr, &data->cmd_list_head, list) {
@@ -311,7 +321,9 @@ static void sec_cmd_store_function(struct sec_cmd_data *data)
 	}
 
 	if (cmd_found) {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("%s: %s %s: cmd = %s", dev_name(data->fac_dev), SECLOG, __func__, sec_cmd_ptr->cmd_name);
+#endif
 		for (i = 0; i < param_cnt; i++) {
 			if (i == 0)
 				pr_cont(" param =");
@@ -319,7 +331,9 @@ static void sec_cmd_store_function(struct sec_cmd_data *data)
 		}
 		pr_cont("\n");
 	} else {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("%s: %s %s: cmd = %s(%s)\n", dev_name(data->fac_dev), SECLOG, __func__, buff, sec_cmd_ptr->cmd_name);
+#endif
 	}
 
 	sec_cmd_ptr->cmd_func(data);
@@ -397,7 +411,9 @@ static ssize_t sec_cmd_store(struct device *dev, struct device_attribute *devatt
 
 	if (kfifo_avail(&data->cmd_queue) && (queue_size < SEC_CMD_MAX_QUEUE)) {
 		kfifo_in(&data->cmd_queue, &cmd, sizeof(struct command));
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("%s: %s %s: push cmd: %s\n", dev_name(data->fac_dev), SECLOG, __func__, cmd.cmd);
+#endif
 	} else {
 		pr_err("%s: %s %s: cmd_queue is full!!\n", dev_name(data->fac_dev), SECLOG, __func__);
 
@@ -463,7 +479,9 @@ static ssize_t sec_cmd_show_status(struct device *dev,
 	else if (data->cmd_state == SEC_CMD_STATUS_NOT_APPLICABLE)
 		snprintf(buff, sizeof(buff), "NOT_APPLICABLE");
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_debug("%s: %s %s: %d, %s\n", dev_name(data->fac_dev), SECLOG, __func__, data->cmd_state, buff);
+#endif
 
 	return snprintf(buf, SEC_CMD_BUF_SIZE, "%s\n", buff);
 }
@@ -497,7 +515,9 @@ static ssize_t sec_cmd_show_status_all(struct device *dev,
 	else if (data->cmd_all_factory_state == SEC_CMD_STATUS_NOT_APPLICABLE)
 		snprintf(buff, sizeof(buff), "NOT_APPLICABLE");
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_debug("%s: %s %s: %d, %s\n", dev_name(data->fac_dev), SECLOG, __func__, data->cmd_all_factory_state, buff);
+#endif
 
 	return snprintf(buf, SEC_CMD_BUF_SIZE, "%s\n", buff);
 }
@@ -523,7 +543,9 @@ static ssize_t sec_cmd_show_result(struct device *dev,
 		data->cmd_state = SEC_CMD_STATUS_WAITING;
 	}
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: %s %s: %s\n", dev_name(data->fac_dev), SECLOG, __func__, buf);
+#endif
 
 	sec_cmd_set_cmd_exit(data);
 
@@ -542,7 +564,9 @@ static ssize_t sec_cmd_show_result_all(struct device *dev,
 	}
 
 	data->cmd_state = SEC_CMD_STATUS_WAITING;
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: %s %s: %d, %s\n", dev_name(data->fac_dev), SECLOG, __func__, data->item_count, data->cmd_result_all);
+#endif
 	size = snprintf(buf, SEC_CMD_RESULT_STR_LEN, "%d%s\n", data->item_count, data->cmd_result_all);
 
 	sec_cmd_set_cmd_exit(data);
@@ -701,7 +725,9 @@ int sec_cmd_init(struct sec_cmd_data *data, struct sec_cmd *cmds,
 	};
 #endif
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: %s %s: done\n", dev_name, SECLOG, __func__);
+#endif
 
 	return 0;
 
@@ -732,7 +758,9 @@ void sec_cmd_exit(struct sec_cmd_data *data, int devt)
 	int ret;
 #endif
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: %s %s\n", dev_name(data->fac_dev), SECLOG, __func__);
+#endif
 	sysfs_remove_group(&data->fac_dev->kobj, &sec_fac_attr_group);
 	dev_set_drvdata(data->fac_dev, NULL);
 #ifdef CONFIG_SEC_SYSFS
@@ -747,7 +775,9 @@ void sec_cmd_exit(struct sec_cmd_data *data, int devt)
 		if (!ret) {
 			pr_err("%s: %s %s: kfifo_out failed, it seems empty, ret=%d\n", dev_name(data->fac_dev), SECLOG, __func__, ret);
 		}
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("%s: %s %s: remove pending commands: %s", dev_name(data->fac_dev), SECLOG, __func__, cmd.cmd);
+#endif
 	}
 	mutex_unlock(&data->fifo_lock);
 	mutex_destroy(&data->fifo_lock);
@@ -797,8 +827,10 @@ void sec_cmd_send_event_to_user(struct sec_cmd_data *data, char *test, char *res
 	}
 	strncat(sresult, eol, 1);
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: %s %s: time:%s, feature:%s, test:%s, result:%s\n",
 			dev_name(data->fac_dev), SECLOG, __func__, timestamp, feature, stest, sresult);
+#endif
 
 	event[0] = timestamp;
 	event[1] = feature;

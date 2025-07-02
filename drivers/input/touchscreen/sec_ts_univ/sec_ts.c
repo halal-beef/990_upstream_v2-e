@@ -773,7 +773,9 @@ static void sec_ts_check_rawdata(struct work_struct *work)
 
 static void dump_tsp_log(void)
 {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: %s %s: start\n", SEC_TS_I2C_NAME, SECLOG, __func__);
+#endif
 
 #ifdef CONFIG_BATTERY_SAMSUNG
 	if (lpcharge == 1) {
@@ -3152,7 +3154,9 @@ static int __init sec_ts_init(void)
 		return -ENODEV;
 	}
 #endif
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_err("%s %s\n", SECLOG, __func__);
+#endif
 
 	return i2c_add_driver(&sec_ts_driver);
 }

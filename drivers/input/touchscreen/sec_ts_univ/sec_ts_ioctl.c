@@ -299,7 +299,9 @@ int tsp_open(struct inode *inode, struct file *file)
 
 int tsp_close(struct inode *inode, struct file *file)
 {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s %s\n", SECLOG, __func__);
+#endif
 
 	return 0;
 }
