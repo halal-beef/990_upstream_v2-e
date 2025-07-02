@@ -54,13 +54,17 @@ void exynos_phy_all_pwrdn(struct exynos_pcie *exynos_pcie, int ch_num)
 
 	/* Trsv */
 	writel(0xFE, phy_base_regs + (0x57 * 4));
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("[%s] phy_base + 0x15C = 0x%x\n", __func__,
 			readl(phy_base_regs + (0x57 * 4)));
+#endif
 
 	/* Common */
 	writel(0xC1, phy_base_regs + (0x20 * 4));
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("[%s] phy_base + 0x80 = 0x%x\n", __func__,
 			readl(phy_base_regs + (0x20 * 4)));
+#endif
 
 	/* Set PCS values */
 	val = readl(phy_pcs_base_regs + 0x100);
@@ -88,8 +92,11 @@ void exynos_phy_all_pwrdn_clear(struct exynos_pcie *exynos_pcie, int ch_num)
 	/* enable Lane0 */
 	writel(readl(sysreg_base_regs + 0xC) | (0x1 << 12),
 			sysreg_base_regs + 0xC);
+
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("[%s] sysreg + 0x1050 = 0x%x\n", __func__,
 			readl(sysreg_base_regs + 0xC));
+#endif
 
 	/* Set PCS values */
 	val = readl(phy_pcs_base_regs + 0x100);
