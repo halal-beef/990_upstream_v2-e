@@ -50,20 +50,26 @@ void exynos_pcie_rc_phy_all_pwrdn(struct exynos_pcie *exynos_pcie, int ch_num)
 		val &= ~(0x1 << 5);
 		val |= (0x1 << 4);
 		writel(val, sysreg_base_regs);
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("%s: Input 100MHz(sysreg base + 0x1060 = 0x%x)\n",
 				__func__, readl(sysreg_base_regs));
+#endif
 	} else {
 		val = readl(sysreg_base_regs + 0x800);
 		val &= ~(0x1 << 5);
 		val |= (0x1 << 4);
 		writel(val, sysreg_base_regs + 0x800);
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("%s: Input 100MHz(sysreg base + 0x800 = 0x%x)\n",
 				__func__, readl(sysreg_base_regs + 0x800));
+#endif
 	}
 
 	writel(0x23, phy_base_regs + 0x400);
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: phy base + 0x400 = 0x%x\n", __func__,
 			readl(phy_base_regs + 0x400));
+#endif
 }
 
 /* PHY all power down clear */
@@ -71,7 +77,9 @@ void exynos_pcie_rc_phy_all_pwrdn_clear(struct exynos_pcie *exynos_pcie, int ch_
 {
 	void __iomem *phy_base_regs = exynos_pcie->phy_base;
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: phybase + 0x400 : 0x0\n", __func__);
+#endif
         writel(0x0, phy_base_regs + 0x400);
 }
 
@@ -136,8 +144,10 @@ void exynos_pcie_rc_pcie_phy_config(struct exynos_pcie *exynos_pcie, int ch_num)
 
 	/* input clk patch change init */
 	writel(0x28, phy_base_regs + 0xD8);
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: input clk path change init(phy base + 0xD8 = 0x%x\n",
 			__func__, readl(phy_base_regs + 0xD8));
+#endif
 
 	if (chip_ver == 0) {
 		/* for EVT0 */
@@ -226,7 +236,9 @@ void exynos_pcie_rc_pcie_phy_config(struct exynos_pcie *exynos_pcie, int ch_num)
 		/* ical code */
 		writel(0x76, phy_base_regs + 0x18);
 	} else if (chip_ver == 1) {
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("[%s]## 9830 EVT1 GEN4 PHY\n", __func__);
+#endif
 		/* for EVT1 */
 		writel(0x50, phy_base_regs + 0x18);
 		writel(0x33, phy_base_regs + 0x48);
@@ -356,15 +368,19 @@ void exynos_pcie_rc_pcie_phy_config(struct exynos_pcie *exynos_pcie, int ch_num)
 
 	/* AES disable */
 	writel(0x0, phy_base_regs + 0x550);
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("[%s] AES disable: phy_base + 0x550 = 0x%x\n", __func__,
 			readl(phy_base_regs + 0x550));
+#endif
 
 	/* DFE off */
 	writel(0x1, phy_base_regs + 0xB9C);
 	writel(0x1, phy_base_regs + 0x139C);
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("[%s] DFE off: phy_base + 0xB9C = 0x%x, phy_base + 0x139C = 0x%x\n",
 			__func__, readl(phy_base_regs + 0xB9C),
 			readl(phy_base_regs + 0x139C));
+#endif
 
 	/* tx amplitude control */
 	/* writel(0x14, phy_base_regs + (0x5C * 4)); */
@@ -376,12 +392,16 @@ void exynos_pcie_rc_pcie_phy_config(struct exynos_pcie *exynos_pcie, int ch_num)
 	//writel(0x12001, dbi_base_regs + 0x890);
 	/* EQ Off --> DBI_Base + 0x890h //Need to insert at the Setup_RC code */
 
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 	pr_info("%s: phy pcs + 0x154, + 0x954 = 0x700D5\n",__func__);
+#endif
 	writel(0x700D5, phy_pcs_base_regs + 0x154);
 	writel(0x700D5, phy_pcs_base_regs + 0x954);
 
 	if (chip_ver == 1){
+#if defined(CONFIG_EXYNOS_LOG_CLEANUP_REVERT)
 		pr_info("[%s] GEN4PHY: For L2 power\n", __func__);
+#endif
 		writel(0x300FF, phy_pcs_base_regs + 0x150);
 	}
 
